@@ -13,7 +13,7 @@
 #-----
 
 #Ignore project specific directories
-*.lib
+#*.lib
 *.tlog
 **/build/**
 **/out/**
@@ -21,11 +21,12 @@
 **/Lumen/Lumen.dir/**
 **/LumenPT/LumenPT.dir/**
 **/LumenPT/CudaPTX.dir/**
-**/LumenPT/Assets/CompiledShaders/**
+**Lumen_Engine/LumenPT/Assets/PrecompiledShaders/**
 **/Sandbox/Sandbox.dir/**
 **/Lumen/vendor/Glad/Glad.dir/**
 **/Lumen/vendor/imgui/ImGui.dir/**
 
+G:\RandomCode\LumenRenderer\Lumen_Engine\Sandbox\assets\models\Sponza
 
 
 #Ignore project specific files.
@@ -63,7 +64,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+#*.dll
 
 # Fortran module files
 *.mod
@@ -466,6 +467,11 @@ _deps
 *-prefix/
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake
+# Precompield shader directory
+Lumen_Engine/LumenPT/Assets/PrecompiledShaders/
+
 *.ptx
 *.ptx
 Lumen_Engine/LumenPT/Assets/PrecompiledShaders/Debug/draw_solid_color.ptx
+*.bmp
+*.ptx

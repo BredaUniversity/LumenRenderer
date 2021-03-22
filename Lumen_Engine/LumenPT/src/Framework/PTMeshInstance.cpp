@@ -1,12 +1,9 @@
 #include "PTMeshInstance.h"
-
+#include "MemoryBuffer.h"
 #include "AccelerationStructure.h"
-
 #include "PTScene.h"
-
-
-#include "OptiXRenderer.h"
 #include "PTPrimitive.h"
+#include "PTServiceLocator.h"
 
 PTMeshInstance::PTMeshInstance(PTServiceLocator& a_ServiceLocator)
     : m_Services(a_ServiceLocator)
@@ -26,17 +23,17 @@ PTMeshInstance::PTMeshInstance(const Lumen::MeshInstance& a_Instance, PTServiceL
 void PTMeshInstance::SetSceneRef(PTScene* a_SceneRef)
 {
     m_SceneRef = a_SceneRef;
-    m_SceneRef->AddMeshInstanceForUpdate(*this);
+    m_SceneRef->MarkSceneForUpdate();
 }
 
 void PTMeshInstance::DependencyCallback()
 {
-    m_SceneRef->AddMeshInstanceForUpdate(*this);
+    m_SceneRef->MarkSceneForUpdate();
 }
 
 
 void PTMeshInstance::SetMesh(std::shared_ptr<Lumen::ILumenMesh> a_Mesh)
 {
     MeshInstance::SetMesh(a_Mesh);
-    m_SceneRef->AddMeshInstanceForUpdate(*this);    
+    m_SceneRef->MarkSceneForUpdate();    
 }

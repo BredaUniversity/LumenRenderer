@@ -1,13 +1,23 @@
 #pragma once
 
-struct PTServiceLocator
+#ifdef  WAVEFRONT
+namespace WaveFront
 {
-#ifdef WAVEFRONT
-    class WaveFrontRenderer* m_Renderer;
-#else
-    class OptiXRenderer* m_Renderer; // To be replaced with whatever our actual renderer class will be
+    class WaveFrontRenderer;
+    class OptixWrapper;
+}
 #endif
 
+struct PTServiceLocator
+{
 
-    class ShaderBindingTableGenerator* m_SBTGenerator;
+#ifdef  WAVEFRONT
+    WaveFront::WaveFrontRenderer* m_Renderer;
+    WaveFront::OptixWrapper* m_OptixWrapper;
+#else
+    class OptiXRenderer* m_Renderer;
+#endif
+
+    class SceneDataTable* m_SceneDataTable;
+
 };

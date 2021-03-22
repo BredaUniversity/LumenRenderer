@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.16)
 enable_language(CUDA)
 
+set(CMAKE_CUDA_FLAGS_DEBUG "${CMAKE_CUDA_FLAGS_DEBUG} -G")
+
 # specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -44,7 +46,6 @@ file(GLOB_RECURSE CUDA_SOURCE_FILES
 #generate .ptx files from .cu files
 add_library(CudaPTX OBJECT ${CUDA_HEADER_FILES} ${CUDA_SOURCE_FILES})
 set_property(TARGET CudaPTX PROPERTY CUDA_PTX_COMPILATION ON)
-#set_property(TARGET CudaPTX PROPERTY CUDA_ARCHITECTURES 52)
 
 target_include_directories(CudaPTX PUBLIC
 	"vendor/Include"
@@ -70,7 +71,10 @@ set(CUDA_FILES_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/Assets/PrecompiledShaders)
 include(${CMAKE_SOURCE_DIR}/cmake/functions.cmake)
 changePath("(.*\\/)([A-Za-z0-9_\\.]+\\.)cu\\;?$" "${CUDA_FILES_OUTPUT_DIR}/\\2ptx" CUDA_FILES_OUTPUT "${CUDA_SOURCE_FILES}")
 
-message("CUDA_FILES_OUTPUT: ${CUDA_FILES_OUTPUT}")
+message("----------[COPIED CUDA FILES OUTPUT]----------")
+printList(${CUDA_FILES_OUTPUT})
+message("----------------------------------------------")
+
 add_custom_command(
 	OUTPUT ${CUDA_FILES_OUTPUT}
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${CUDA_FILES_OUTPUT_DIR}
@@ -87,6 +91,7 @@ file(GLOB_RECURSE CPP_HEADER_FILES
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
 	${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/*.inl
 	${CMAKE_CURRENT_SOURCE_DIR}/src/CUDAKernels/*.cuh
 )
 
@@ -118,7 +123,31 @@ set(LIBS
 	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/Cuda/cudadevrt.lib"
 	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/glad.lib"
 	libnanovdb
+	openvdb_static
+
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/tbb/tbb.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/tbb/tbbmalloc.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/tbb/tbbmalloc_proxy.lib"
+
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/blosc.lib"
+
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/zlib.lib"
+
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/Half-2_5.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/Iex-2_5.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/IexMath-2_5.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/IlmImf-2_5.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/IlmImfUtil-2_5.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/IlmThread-2_5.lib"
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/Libs/OpenEXR/Imath-2_5.lib"
+
+
 )
+
+#include(${CMAKE_CURRENT_SOURCE_DIR}/vendor/openvdb/openvdb/openvdb/CMakeLists.txt)
+#get_cmake_property(_variableNames OPENVDB_CORE_DEPENDENT_LIBS)
+#message(test)
+#message("${OPENVDB_CORE_DEPENDENT_LIBS}")
 
 set(INCLUDES
 	"vendor/Include"
@@ -129,6 +158,7 @@ set(INCLUDES
 	"${CMAKE_CURRENT_SOURCE_DIR}/../Lumen/vendor/glm"
 	"${CMAKE_CURRENT_BINARY_DIR}/config"
 	${NANOVDB_HEADERS}
+	"${CMAKE_CURRENT_SOURCE_DIR}/vendor/openvdb/openvdb"
 )
 
 # Define the include DIRs
